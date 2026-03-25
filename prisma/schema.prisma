@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// Definição do Modelo de Perfil
+model Profile {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relação 1 para N com Usuário
+  users User[]
+}
+
+// Definição do Modelo de Usuário
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+  name     String
+
+  // Relação N para 1 com Perfil
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId String
+
+  // Relação 1 para 1 com Endereço (Opcional)
+  address Address?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Definição do Modelo de Endereço
+model Address {
+  id      String @id @default(uuid())
+  street  String
+  number  Int
+  city    String
+  state   String
+  zipCode String
+
+  // Relação 1 para 1 com Usuário
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique // Obrigatório para garantir a unicidade 1:1
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
