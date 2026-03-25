@@ -1,0 +1,84 @@
+{
+  "test_sequence": [
+    {
+      "step": "Profiles",
+      "actions": [
+        {
+          "operation": "POST /profiles",
+          "payload": { "name": "ADMIN" }
+        },
+        {
+          "operation": "POST /profiles",
+          "payload": { "name": "USER" }
+        },
+        {
+          "operation": "GET /profiles",
+          "expected": "Lista com 2 perfis"
+        }
+      ]
+    },
+    {
+      "step": "Users",
+      "actions": [
+        {
+          "operation": "POST /users",
+          "description": "Criar usuário com profileId do ADMIN",
+          "payload": {
+            "email": "admin@example.com",
+            "password": "password123",
+            "name": "Admin User",
+            "profileId": "ID_DO_PERFIL_ADMIN"
+          }
+        },
+        {
+          "operation": "POST /users",
+          "description": "Criar usuário com profileId do USER",
+          "payload": {
+            "email": "user@example.com",
+            "password": "password123",
+            "name": "Standard User",
+            "profileId": "ID_DO_PERFIL_USER"
+          }
+        }
+      ]
+    },
+    {
+      "step": "Addresses",
+      "actions": [
+        {
+          "operation": "POST /addresses",
+          "description": "Associar endereço ao primeiro usuário",
+          "payload": {
+            "street": "Rua Central",
+            "number": 123,
+            "city": "Bragança",
+            "state": "SP",
+            "zipCode": "12900-000",
+            "userId": "ID_DO_PRIMEIRO_USUARIO"
+          }
+        },
+        {
+          "operation": "POST /addresses",
+          "description": "Tentar duplicar endereço (Deve falhar)",
+          "payload": {
+            "street": "Outra Rua",
+            "number": 456,
+            "city": "Bragança",
+            "state": "SP",
+            "zipCode": "12900-001",
+            "userId": "ID_DO_PRIMEIRO_USUARIO"
+          }
+        }
+      ]
+    },
+    {
+      "step": "CRUD & Cascade",
+      "actions": [
+        { "operation": "GET /users", "description": "Verificar se 'profile' está incluso no JSON" },
+        { "operation": "PATCH /users/{id}", "payload": { "name": "Admin Updated" } },
+        { "operation": "DELETE /addresses/{id}", "description": "Remover apenas o endereço" },
+        { "operation": "DELETE /users/{id}", "description": "Remover usuário e verificar se endereço some (Cascade)" }
+      ]
+    }
+  ]
+}
